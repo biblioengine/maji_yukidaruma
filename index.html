@@ -256,7 +256,8 @@ $('front').onclick=()=>reorder(true);
 $('back').onclick=()=>reorder(false);
 $('dup').onclick=()=>{
   const list=selItems().filter(i=>!isBall(i));if(!list.length)return;push();
-  const gm={};const copies=list.map(i=>{const c={...i,id:'p'+(nid++),x:clamp(i.x+16,0,400),y:clamp(i.y+16,0,520)};if(i.g){c.g=gm[i.g]||(gm[i.g]='g'+(gid++))}return c});
+  const bb=bounds(list),step=bb.rad*2+6,dx=(bb.cx+step<=400||bb.cx+step-400<step-bb.cx)?step:-step;
+  const gm={};const copies=list.map(i=>{const c={...i,id:'p'+(nid++),x:i.x+dx,y:i.y};if(i.g){c.g=gm[i.g]||(gm[i.g]='g'+(gid++))}return c});
   items.push(...copies);sel=new Set(copies.map(c=>c.id));render();
 };
 $('del').onclick=()=>{if(!selItems().some(i=>!isBall(i)))return;push();items=items.filter(i=>!(sel.has(i.id)&&!isBall(i)));sel=new Set();render()};
