@@ -22,7 +22,7 @@ main{max-width:640px;height:100dvh;margin:0 auto;padding:10px max(3vw,10px) 10px
 h1{font-family:"Yuji Boku",serif;font-size:clamp(20px,5.6vw,30px);line-height:1.15;margin:2px 0 0;font-weight:400;letter-spacing:-.02em;white-space:nowrap;-webkit-text-stroke:1px currentColor;filter:url(#rough);transform:rotate(-1.5deg);transform-origin:left center}
 .stage{flex:1;min-height:0;display:grid;place-items:center}
 .frame{position:relative;width:300px;height:390px}
-#share{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);min-height:48px;padding:0 22px;font-size:16px;border-radius:999px;box-shadow:0 6px 16px rgba(120,20,30,.35);white-space:nowrap}
+#share{justify-self:center;min-height:48px;padding:0 14px;font-size:15px;border-radius:999px;box-shadow:0 6px 16px rgba(120,20,30,.3);white-space:nowrap}
 #svg{display:block;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none}
 .bar{display:flex;gap:6px;align-items:center;overflow-x:auto;padding:4px 2px;overscroll-behavior-x:contain;scrollbar-width:none}
 .bar::-webkit-scrollbar{display:none}
@@ -38,7 +38,12 @@ button[aria-pressed=true]{background:#2f5f97;border-color:#2f5f97;color:#fff}
 .parts button[aria-pressed=true]{background:light-dark(#dceaf8,#24405f);color:var(--ink);border-color:#2f5f97}
 button.main{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:800}
 h2{font-size:18px;margin:0 0 10px}
-.ctl{display:grid;grid-template-columns:100px minmax(0,1fr);gap:10px;align-items:center}
+.ctl{display:grid;grid-template-columns:100px minmax(0,1fr) 100px;gap:8px;align-items:center}
+#gz{cursor:default}
+#gz .gl{stroke:#9fb6d3;stroke-width:2}
+#gz .gred{fill:#d8323c;stroke:#fff;stroke-width:3}
+#gz .gsq{fill:#2f5f97;stroke:#fff;stroke-width:3}
+#gz [data-h]{cursor:grab}
 .pad{width:100px;height:100px;touch-action:none;cursor:move;user-select:none;-webkit-user-select:none}
 .pad svg{width:100%;height:100%;display:block;filter:drop-shadow(0 3px 5px rgba(20,40,70,.25))}
 .pad .dp{fill:light-dark(#2f3640,#4a5361)}.pad .dr{fill:none;stroke:light-dark(#46505d,#606b7b);stroke-width:2}
@@ -81,10 +86,12 @@ h2{font-size:18px;margin:0 0 10px}
         <g id="ui"></g>
         <g id="tray" style="cursor:grab"></g>
       </svg>
-      <button id="share" class="main">画像にしてシェア</button>
   </div></div>
   <div class="ctl">
     <div class="pad off" id="pad" aria-label="移動パッド"><svg viewBox="0 0 120 120"><circle class="dp" cx="60" cy="60" r="57"/><circle class="dr" cx="60" cy="60" r="44"/><path class="da" d="M60 9l-7 9h14zM60 111l-7-9h14zM9 60l9-7v14zM111 60l-9-7v14z"/><g id="knob"><circle class="dk" cx="60" cy="60" r="22"/><circle class="dk2" cx="60" cy="60" r="15"/></g></svg></div>
+    <button id="share" class="main">画像にしてシェア</button>
+    <div class="pad off" id="gz" aria-label="変形パッド"><svg viewBox="0 0 120 120"><circle class="dp" cx="60" cy="60" r="57"/><circle class="dr" cx="60" cy="60" r="40" stroke-dasharray="4 4"/><g id="gzg"></g></svg></div>
+  </div>
   <div class="bar">
     <button id="undo" class="icon" aria-label="元に戻す" title="元に戻す"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/></svg></button>
     <button id="flip" class="icon" aria-label="左右反転" title="左右反転" disabled><svg viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg></button>
@@ -96,7 +103,6 @@ h2{font-size:18px;margin:0 0 10px}
     <button id="group" disabled>グループ化</button>
     <button id="ungroup" disabled>グループ解除</button>
     <button id="reset">最初から</button>
-  </div>
   </div>
   <div class="parts" id="parts" aria-label="部品"></div>
 </main>
@@ -154,9 +160,7 @@ function render(){
   if(list.length){
     const b=bounds(list),rc=b.rad*1.1+8;
     const each=list.length>1?list.map(i=>`<circle cx="${i.x}" cy="${i.y}" r="${ext(i)*1.05+4}" fill="none" stroke="#2f5f97" stroke-width="1.5" stroke-dasharray="3 4" opacity=".8" pointer-events="none"/>`).join(''):'';
-    const deg=uiAng!=null?uiAng:(list.length===1?list[0].r:0)-45;
-    const a=deg*Math.PI/180,hx=b.cx+Math.cos(a)*rc,hy=b.cy+Math.sin(a)*rc;
-    uiG.innerHTML=each+`<circle cx="${b.cx}" cy="${b.cy}" r="${rc}" fill="none" stroke="#2f5f97" stroke-width="2" stroke-dasharray="6 5" pointer-events="none"/><line x1="${b.cx}" y1="${b.cy}" x2="${hx}" y2="${hy}" stroke="#2f5f97" stroke-width="1.5" opacity=".7" pointer-events="none"/><circle id="handle" cx="${hx}" cy="${hy}" r="18" fill="transparent" style="cursor:nwse-resize"/><circle cx="${hx}" cy="${hy}" r="10" fill="#d8323c" stroke="#fff" stroke-width="3" pointer-events="none"/>`+(list.length===1?stretchUI(list[0]):'');
+    uiG.innerHTML=each+`<circle cx="${b.cx}" cy="${b.cy}" r="${rc}" fill="none" stroke="#2f5f97" stroke-width="2" stroke-dasharray="6 5" pointer-events="none"/>`;
   }else uiG.innerHTML='';
   const has=list.length>0,nonBall=list.some(i=>!isBall(i));
   const allSame=has&&list.every(i=>i.g&&i.g===list[0].g);
@@ -174,7 +178,7 @@ function stretchUI(it){
 }
 const pt=e=>{const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())};
 const ptrs=new Map();let mode=null,st=null,moved=false,downId=null,addedNow=false;
-const snapSel=()=>selItems().map(i=>({it:i,x:i.x,y:i.y,s:i.s,r:i.r}));
+const snapSel=()=>selItems().map(i=>({it:i,x:i.x,y:i.y,s:i.s,r:i.r,sx:i.sx||1,sy:i.sy||1}));
 function xform(k,da,S){S=S||st;
   let kmin=0,kmax=Infinity;S.snap.forEach(o=>{kmin=Math.max(kmin,.15/o.s);kmax=Math.min(kmax,4/o.s)});
   k=clamp(k,kmin,kmax);const c=S.c,co=Math.cos(da),si=Math.sin(da);
@@ -287,7 +291,40 @@ $('copytag').onclick=async()=>{try{await navigator.clipboard.writeText(HASHTAG);
 $('close').onclick=()=>$('modal').classList.remove('on');
 const fit=()=>{const st=$('stage'),W=st.clientWidth,H=st.clientHeight;const w=Math.min(W,H*400/520);$('frame').style.width=w+'px';$('frame').style.height=(w*520/400)+'px'};
 const stageRO=new ResizeObserver(fit);stageRO.observe($('stage'));fit();
-function syncCtl(list){$('pad').classList.toggle('off',!list.length)}
+let gzDrag=null,gst=null;
+function syncCtl(list){$('pad').classList.toggle('off',!list.length);$('gz').classList.toggle('off',!list.length);renderGz(list)}
+function renderGz(list){
+  const ang=(list.length===1?list[0].r:0)+(gst&&gst.h==='rot'&&gzDrag?0:0);
+  const P=(deg,rad)=>{const a=deg*Math.PI/180;return[60+Math.cos(a)*rad,60+Math.sin(a)*rad]};
+  let red=P(ang-45,40),sx=P(ang,40),sy=P(ang+90,40);
+  if(gzDrag){if(gzDrag.h==='rot')red=gzDrag.p;else if(gzDrag.h==='sx')sx=gzDrag.p;else sy=gzDrag.p}
+  const sq=(h,[x,y])=>`<rect class="gsq" x="${x-8}" y="${y-8}" width="16" height="16" rx="3" transform="rotate(${ang} ${x} ${y})"/><circle data-h="${h}" cx="${x}" cy="${y}" r="17" fill="transparent"/>`;
+  $('gzg').innerHTML=`<line class="gl" x1="60" y1="60" x2="${red[0]}" y2="${red[1]}"/><circle cx="60" cy="60" r="4" fill="#9fb6d3"/>`+sq('sx',sx)+sq('sy',sy)+`<circle class="gred" cx="${red[0]}" cy="${red[1]}" r="10"/><circle data-h="rot" cx="${red[0]}" cy="${red[1]}" r="18" fill="transparent"/>`;
+}
+const gzPt=e=>{const r=$('gz').getBoundingClientRect(),k=120/r.width;return[(e.clientX-r.left)*k,(e.clientY-r.top)*k]};
+$('gz').addEventListener('pointerdown',e=>{
+  const t=e.target.closest('[data-h]');if(!t||!sel.size)return;
+  try{$('gz').setPointerCapture(e.pointerId)}catch(err){}
+  const p=gzPt(e),list=selItems(),bb=bounds(list),ang=(list.length===1?list[0].r:0)*Math.PI/180,h=t.dataset.h;
+  gst={h,p0:p,c:{x:bb.cx,y:bb.cy},snap:snapSel(),moved:false,a0:Math.atan2(p[1]-60,p[0]-60),d0:Math.max(8,Math.hypot(p[0]-60,p[1]-60)),u:h==='sx'?[Math.cos(ang),Math.sin(ang)]:[-Math.sin(ang),Math.cos(ang)]};
+  $('gz').classList.add('on');
+});
+$('gz').addEventListener('pointermove',e=>{
+  if(!gst)return;const p=gzPt(e);
+  if(!gst.moved){if(Math.hypot(p[0]-gst.p0[0],p[1]-gst.p0[1])<1)return;push();gst.moved=true}
+  if(gst.h==='rot'){
+    const a=Math.atan2(p[1]-60,p[0]-60),d=Math.hypot(p[0]-60,p[1]-60);
+    xform(d/gst.d0,a-gst.a0,gst);
+    const dd=clamp(d,12,56);gzDrag={h:'rot',p:[60+Math.cos(a)*dd,60+Math.sin(a)*dd]};
+  }else{
+    const d=(p[0]-gst.p0[0])*gst.u[0]+(p[1]-gst.p0[1])*gst.u[1],f=Math.pow(2,d/30),k=gst.h;
+    gst.snap.forEach(o=>{o.it[k]=clamp(o[k]*f,.15,6)});
+    const dd=clamp(d,-18,16),b=gst.p0;gzDrag={h:k,p:[b[0]+gst.u[0]*dd,b[1]+gst.u[1]*dd]};
+  }
+  render();
+});
+const gzEnd=()=>{gst=null;gzDrag=null;$('gz').classList.remove('on');render()};
+$('gz').addEventListener('pointerup',gzEnd);$('gz').addEventListener('pointercancel',gzEnd);
 let padSt=null;
 $('pad').addEventListener('pointerdown',e=>{if(!sel.size)return;try{$('pad').setPointerCapture(e.pointerId)}catch(err){}
   padSt={x:e.clientX,y:e.clientY,moved:false,snap:snapSel()};$('pad').classList.add('on')});
