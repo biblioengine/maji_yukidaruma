@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>本気の雪だるまを見せてくれないか</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Yuji+Boku&text=%E6%9C%AC%E6%B0%97%E3%81%AE%E9%9B%AA%E3%81%A0%E3%82%8B%E3%81%BE%E3%82%92%E8%A6%8B%E3%81%9B%E3%81%A6%E3%81%8F%E3%82%8C%E3%81%AA%E3%81%84%E3%81%8B&display=swap" rel="stylesheet">
+<style>
+/* VOICE: やさしく遊べるおもちゃ。説明は最小限
+   IDEA: 冬の夕方の空き地。手で雪だるまをこしらえる
+   PICTURE: 雪原と空のステージそのもの。雪玉2つが主役
+   COLOUR and TYPE: 夕暮れの青、雪の白、マフラーの赤 / M PLUS Rounded 1c
+   LAYOUT: 広い画面はステージ左・部品右、スマホは縦積み */
+:root{color-scheme:light dark;--bg:light-dark(#eef4fa,#0f1a26);--ink:light-dark(#14263a,#e8f0f8);--card:light-dark(#ffffff,#18283a);--line:light-dark(#cfdcea,#2a3e55);--accent:#d8323c;--sub:light-dark(#4a6178,#9fb3c8)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "M PLUS Rounded 1c",system-ui,sans-serif;overflow-x:clip}
+html,body{height:100%;overflow:hidden}
+main{max-width:640px;height:100dvh;margin:0 auto;padding:10px max(3vw,10px) 10px;display:flex;flex-direction:column;gap:8px}
+h1{font-family:"Yuji Boku",serif;font-size:clamp(20px,5.6vw,30px);line-height:1.15;margin:2px 0 0;font-weight:400;letter-spacing:-.02em;white-space:nowrap;-webkit-text-stroke:1px currentColor;filter:url(#rough);transform:rotate(-1.5deg);transform-origin:left center}
+.stage{flex:1;min-height:0;display:grid;place-items:center}
+#svg{display:block;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none}
+.bar{display:flex;gap:6px;align-items:center;overflow-x:auto;padding-bottom:4px;overscroll-behavior-x:contain}
+.bar button{flex:none;padding:0 11px}
+.bar .icon{width:44px;padding:0;display:grid;place-items:center}
+.bar .icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.bar .sp{flex:1;min-width:8px}
+[hidden]{display:none!important}
+button{font:inherit;font-size:15px;min-height:44px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button:focus-visible{outline:3px solid #5aa0e6;outline-offset:2px}
+button:disabled{opacity:.4;cursor:default}
+button[aria-pressed=true]{background:#2f5f97;border-color:#2f5f97;color:#fff}
+.parts button[aria-pressed=true]{background:light-dark(#dceaf8,#24405f);color:var(--ink);border-color:#2f5f97}
+button.main{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:800}
+h2{font-size:18px;margin:0 0 10px}
+.parts{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 8px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.parts button{flex:none;width:84px;height:auto;padding:8px 4px 6px;display:grid;justify-items:center;gap:2px;font-size:12px;white-space:nowrap;scroll-snap-align:start}
+.parts svg{width:52px;height:52px}
+#modal{position:fixed;inset:0;background:rgba(8,16,28,.7);display:none;place-items:center;padding:20px;z-index:9}
+#modal.on{display:grid}
+#modal .box{background:var(--card);border-radius:18px;padding:16px;max-width:420px;width:100%;text-align:center}
+#modal img{width:100%;border-radius:12px;display:block;margin-bottom:10px}
+#modal .tag{font-size:18px;font-weight:800;color:var(--ink)}
+#modal .mrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+#modal p{margin:0 0 12px;font-size:14px;color:var(--sub)}
+@media(prefers-reduced-motion:no-preference){.flake{animation:fall 9s linear infinite}@keyframes fall{from{transform:translateY(-20px)}to{transform:translateY(420px)}}}
+</style>
+</head>
+<body>
+<main>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="rough" x="-5%" y="-20%" width="110%" height="140%"><feTurbulence type="fractalNoise" baseFrequency="0.9 0.25" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3" result="d"/><feTurbulence type="fractalNoise" baseFrequency="0.9 0.06" numOctaves="3" seed="7" result="n2"/><feColorMatrix in="n2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.4 1.75" result="m"/><feComposite in="d" in2="m" operator="in"/></filter></svg>
+<h1>本気の雪だるまを見せてくれないか</h1>
+  <div class="stage">
+      <svg id="svg" viewBox="0 0 400 520" aria-label="雪だるまのステージ">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f5f97"/><stop offset=".7" stop-color="#8fb5d9"/><stop offset="1" stop-color="#d9e7f3"/></linearGradient>
+          <radialGradient id="snow" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#ffffff"/><stop offset=".65" stop-color="#f1f6fb"/><stop offset="1" stop-color="#c9d9ea"/></radialGradient>
+          <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dfe9f4"/></linearGradient>
+        </defs>
+        <g id="bg">
+          <rect width="400" height="520" fill="url(#sky)"/>
+          <path d="M0 420 Q100 395 200 412 T400 405 V520 H0Z" fill="url(#ground)"/>
+          <g id="flakes" fill="#fff" opacity=".8"></g>
+        </g>
+        <g id="items"></g>
+        <g id="ui"></g>
+        <g id="tray" style="cursor:grab"></g>
+      </svg>
+  </div>
+  <div class="bar">
+    <button id="undo" class="icon" aria-label="元に戻す" title="元に戻す"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/></svg></button>
+    <button id="flip" class="icon" aria-label="左右反転" title="左右反転" disabled><svg viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg></button>
+    <button id="front" disabled>前面へ</button>
+    <button id="back" disabled>背面へ</button>
+    <button id="dup" disabled>複製</button>
+    <button id="del" class="icon" aria-label="削除" title="削除" disabled><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+    <button id="multi" aria-pressed="false">複数選択</button>
+    <button id="group" disabled>グループ化</button>
+    <button id="ungroup" disabled>グループ解除</button>
+    <span class="sp"></span>
+    <button id="reset">最初から</button>
+    <button id="share" class="main">画像にしてシェア</button>
+  </div>
+  <div class="parts" id="parts" aria-label="部品"></div>
+</main>
+<div id="modal" role="dialog" aria-modal="true"><div class="box"><img id="out" alt="できあがった雪だるま"><p>画像を長押し（パソコンは右クリック）で保存できます。投稿にはこのハッシュタグを付けてください。</p><p class="tag" id="tag"></p><div class="mrow"><button id="copytag">ハッシュタグをコピー</button><button id="close">閉じる</button></div></div></div>
+<script>
+{
+const DEF={
+  body:{name:'胴体',R:100,svg:'<circle r="100" fill="url(#snow)"/>'},
+  head:{name:'頭',R:100,svg:'<circle r="100" fill="url(#snow)"/>'},
+  ball:{name:'雪玉',R:100,spawn:.45,svg:'<circle r="100" fill="url(#snow)"/>'},
+  eye:{name:'目',R:9,svg:'<circle r="7.5" fill="#1b1d22"/><circle cx="-2.4" cy="-2.6" r="2.2" fill="#fff"/>'},
+  nose:{name:'にんじん鼻',R:30,svg:'<path d="M-6-8L32 0L-6 8Z" fill="#f07a1a"/><path d="M4-5l2 4M13-3l2 3" stroke="#b9530c" stroke-width="1.6" stroke-linecap="round"/><path d="M-6-8q-6 0-6 8t6 8" fill="#e06a10"/>'},
+  mouth:{name:'口',R:28,svg:[[-24,-5],[-12,1],[0,3.5],[12,1],[24,-5]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3.6" fill="#2a2a30"/>`).join('')},
+  cheek:{name:'ほっぺ',R:12,svg:'<ellipse rx="11" ry="7" fill="#ff8fa6" opacity=".65"/>'},
+  button:{name:'ボタン',R:10,svg:'<circle r="9" fill="#2a2d36"/><circle cx="-3" cy="-3" r="2.4" fill="#5b6070"/>'},
+  arm:{name:'枝の腕',R:50,svg:'<path d="M-50 0H50" stroke="#6b4423" stroke-width="5" stroke-linecap="round"/>'},
+  bucket:{name:'バケツ',R:42,svg:'<path d="M-30-28Q-36 0-38 24" fill="none" stroke="#6d7680" stroke-width="2.5"/><path d="M-38 24L38 24L28-28L-28-28Z" fill="#3d7fd9"/><path d="M-28-28L28-28L29-22L-29-22Z" fill="#2c64b3"/><rect x="-40" y="20" width="80" height="7" rx="3" fill="#2c64b3"/><path d="M-20-20L-24 16" stroke="#7fb0ef" stroke-width="5" stroke-linecap="round" opacity=".6"/>'},
+  tophat:{name:'シルクハット',R:46,svg:'<ellipse cy="24" rx="46" ry="9" fill="#17181c"/><rect x="-28" y="-40" width="56" height="64" rx="4" fill="#22242a"/><rect x="-28" y="6" width="56" height="11" fill="#c8323c"/><ellipse cy="-40" rx="28" ry="5" fill="#33363e"/>'},
+  shovel:{name:'スコップ',R:58,svg:'<rect x="-3.5" y="-50" width="7" height="72" rx="3" fill="#9a6b3c"/><rect x="-13" y="-58" width="26" height="9" rx="4.5" fill="#6b4423"/><path d="M-16 18H16L14 48Q0 62-14 48Z" fill="#8f9aa5"/><path d="M-9 24L-8 46" stroke="#c9d1d9" stroke-width="3" stroke-linecap="round"/><rect x="-6" y="14" width="12" height="8" rx="2" fill="#6d7680"/>'},
+  pinecone:{name:'松ぼっくり',R:21,svg:(()=>{let o='<ellipse rx="14" ry="19" fill="#6e4220"/>';[[-13,[0]],[-7,[-6,6]],[-1,[-9,0,9]],[5,[-8,0,8]],[11,[-5,5]],[16,[0]]].forEach(([y,xs])=>xs.forEach(x=>{o+=`<path d="M${x-5} ${y}q5 6 10 0" fill="#9a6332" stroke="#4e2f14" stroke-width="1.2"/>`}));return o})()},
+  muffler:{name:'マフラー',R:72,svg:'<rect x="26" y="0" width="22" height="64" rx="5" fill="#b8262f"/><path d="M30 64v8M37 64v8M44 64v8" stroke="#b8262f" stroke-width="3"/><rect x="-72" y="-13" width="144" height="26" rx="13" fill="#d8323c"/><path d="M-50-13v26M-20-13v26M10-13v26M40-13v26" stroke="#f3eee4" stroke-width="5" opacity=".9"/><path d="M26 22h22M26 40h22" stroke="#f3eee4" stroke-width="5" opacity=".9"/>'}
+};
+const PART_ORDER=['ball','eye','nose','mouth','cheek','button','arm','bucket','tophat','muffler','shovel','pinecone'];
+const HASHTAG='#本気の雪だるまを見せてくれないか';
+const svg=document.getElementById('svg'),itemsG=document.getElementById('items'),uiG=document.getElementById('ui'),trayG=document.getElementById('tray');
+const $=id=>document.getElementById(id);
+let items,sel=new Set(),nid=1,gid=1,hist=[],multi=false,trayType=null,uiAng=null;
+const initial=()=>[{id:'b',type:'body',x:200,y:355,s:.88,r:0,f:false},{id:'h',type:'head',x:200,y:200,s:.62,r:0,f:false}];
+items=initial();
+
+$('flakes').innerHTML=Array.from({length:28},(_,i)=>{const x=(i*53)%400,y=(i*97)%400,r=1+(i%3)*.8;return `<circle class="flake" style="animation-delay:-${(i*.7)%9}s" cx="${x}" cy="${y-400}" r="${r}"/><circle cx="${(x+27)%400}" cy="${y}" r="${r}"/>`}).join('');
+
+$('parts').innerHTML=PART_ORDER.map(t=>{const d=DEF[t],k=40/d.R;return `<button data-add="${t}" aria-pressed="false"><svg viewBox="-50 -50 100 100"><g transform="scale(${Math.min(k,2.6)})">${d.svg}</g></svg>${d.name}</button>`}).join('');
+
+const snap=()=>JSON.stringify(items);
+const push=()=>{hist.push(snap());if(hist.length>60)hist.shift()};
+const get=id=>items.find(i=>i.id===id);
+const isBall=()=>false;
+const ext=i=>DEF[i.type].R*i.s*Math.max(i.sx||1,i.sy||1);
+const groupOf=id=>{const it=get(id);return it&&it.g?items.filter(x=>x.g===it.g).map(x=>x.id):[id]};
+const selItems=()=>items.filter(x=>sel.has(x.id));
+const bounds=list=>{let cx=0,cy=0;list.forEach(i=>{cx+=i.x;cy+=i.y});cx/=list.length;cy/=list.length;let rad=0;list.forEach(i=>{rad=Math.max(rad,Math.hypot(i.x-cx,i.y-cy)+ext(i))});return{cx,cy,rad}};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+function renderTray(){
+  let inner;
+  if(trayType){const d=DEF[trayType],k=Math.min(30/d.R,2.6);inner=`<g transform="translate(52 52) scale(${k})">${d.svg}</g>`}
+  else inner=`<text x="52" y="48" text-anchor="middle" font-size="11" fill="#4a6178">部品を選ぶと</text><text x="52" y="64" text-anchor="middle" font-size="11" fill="#4a6178">ここに出ます</text>`;
+  trayG.innerHTML=`<rect x="8" y="8" width="88" height="88" rx="14" fill="#fff" fill-opacity=".88" stroke="#2f5f97" stroke-width="2" stroke-dasharray="5 4"/>${inner}`;
+}
+
+function render(){
+  itemsG.innerHTML=items.map(it=>`<g data-id="${it.id}" transform="translate(${it.x} ${it.y}) rotate(${it.r}) scale(${(it.f?-1:1)*it.s*(it.sx||1)} ${it.s*(it.sy||1)})" style="cursor:grab">${DEF[it.type].svg}</g>`).join('');
+  const list=selItems();
+  if(list.length){
+    const b=bounds(list),rc=b.rad*1.1+8;
+    const deg=uiAng!=null?uiAng:(list.length===1&&!isBall(list[0])?list[0].r:0)-45;
+    const a=deg*Math.PI/180,hx=b.cx+Math.cos(a)*rc,hy=b.cy+Math.sin(a)*rc;
+    const each=list.length>1?list.map(i=>`<circle cx="${i.x}" cy="${i.y}" r="${ext(i)*1.05+4}" fill="none" stroke="#2f5f97" stroke-width="1.5" stroke-dasharray="3 4" opacity=".8" pointer-events="none"/>`).join(''):'';
+    uiG.innerHTML=each+`<circle cx="${b.cx}" cy="${b.cy}" r="${rc}" fill="none" stroke="#2f5f97" stroke-width="2" stroke-dasharray="6 5" pointer-events="none"/><line x1="${b.cx}" y1="${b.cy}" x2="${hx}" y2="${hy}" stroke="#2f5f97" stroke-width="1.5" opacity=".7" pointer-events="none"/><circle id="handle" cx="${hx}" cy="${hy}" r="18" fill="transparent" style="cursor:nwse-resize"/><circle cx="${hx}" cy="${hy}" r="10" fill="#d8323c" stroke="#fff" stroke-width="3" pointer-events="none"/>`+(list.length===1?stretchUI(list[0]):'');
+  }else uiG.innerHTML='';
+  const has=list.length>0,nonBall=list.some(i=>!isBall(i));
+  const allSame=has&&list.every(i=>i.g&&i.g===list[0].g);
+  $('flip').disabled=!(nonBall||list.length>1);$('front').disabled=!has;$('back').disabled=!has;
+  $('dup').disabled=!nonBall;$('del').disabled=!nonBall;$('undo').disabled=!hist.length;
+  $('group').disabled=list.length<2||allSame;$('ungroup').disabled=!list.some(i=>i.g);
+}
+
+function axes(it){const a=it.r*Math.PI/180;return{u:{x:Math.cos(a),y:Math.sin(a)},v:{x:-Math.sin(a),y:Math.cos(a)}}}
+function stretchUI(it){
+  const {u,v}=axes(it),R=DEF[it.type].R*it.s,ax=R*(it.sx||1)+16,ay=R*(it.sy||1)+16;
+  const h=(id,x,y)=>`<circle id="${id}" cx="${x}" cy="${y}" r="17" fill="transparent" style="cursor:move"/><rect x="${x-7}" y="${y-7}" width="14" height="14" rx="3" fill="#2f5f97" stroke="#fff" stroke-width="2.5" transform="rotate(${it.r} ${x} ${y})" pointer-events="none"/>`;
+  return h('hx',it.x+u.x*ax,it.y+u.y*ax)+h('hy',it.x+v.x*ay,it.y+v.y*ay);
+}
+const pt=e=>{const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())};
+const ptrs=new Map();let mode=null,st=null,moved=false,downId=null,addedNow=false;
+const snapSel=()=>selItems().map(i=>({it:i,x:i.x,y:i.y,s:i.s,r:i.r}));
+function xform(k,da){
+  let kmin=0,kmax=Infinity;st.snap.forEach(o=>{kmin=Math.max(kmin,.15/o.s);kmax=Math.min(kmax,4/o.s)});
+  k=clamp(k,kmin,kmax);const c=st.c,co=Math.cos(da),si=Math.sin(da);
+  st.snap.forEach(o=>{const vx=o.x-c.x,vy=o.y-c.y;o.it.x=c.x+k*(vx*co-vy*si);o.it.y=c.y+k*(vx*si+vy*co);o.it.s=o.s*k;if(!isBall(o.it))o.it.r=o.r+da*180/Math.PI});
+}
+
+svg.addEventListener('pointerdown',e=>{
+  svg.setPointerCapture(e.pointerId);
+  const p=pt(e);ptrs.set(e.pointerId,p);
+  if(ptrs.size===2&&sel.size){
+    const [a,b]=[...ptrs.values()],bb=bounds(selItems());
+    if(!moved){push();moved=true}
+    mode='pinch';st={c:{x:bb.cx,y:bb.cy},d0:Math.max(1,Math.hypot(b.x-a.x,b.y-a.y)),a0:Math.atan2(b.y-a.y,b.x-a.x),snap:snapSel()};return;
+  }
+  if(ptrs.size>1)return;
+  moved=false;addedNow=false;downId=null;
+  if(e.target.closest('#tray')){
+    if(!trayType){mode=null;return}
+    push();moved=true;
+    const it={id:'p'+(nid++),type:trayType,x:p.x,y:p.y,s:DEF[trayType].spawn||1,r:0,f:false,sx:1,sy:1};
+    items.push(it);sel=new Set([it.id]);mode='drag';st={p0:p,snap:snapSel()};render();return;
+  }
+  if(e.target.id==='hx'||e.target.id==='hy'){const it=selItems()[0];if(!it)return;const ax=axes(it);mode='stretch';st={it,axis:e.target.id,dir:e.target.id==='hx'?ax.u:ax.v};return}
+  if(e.target.id==='handle'){
+    const bb=bounds(selItems()),c={x:bb.cx,y:bb.cy};
+    mode='handle';st={c,d0:Math.max(1,Math.hypot(p.x-c.x,p.y-c.y)),a0:Math.atan2(p.y-c.y,p.x-c.x),snap:snapSel()};return;
+  }
+  const g=e.target.closest('[data-id]');
+  if(g){
+    const id=g.dataset.id,grp=groupOf(id);
+    if(multi||e.shiftKey){if(!sel.has(id)){grp.forEach(i=>sel.add(i));addedNow=true}downId=id}
+    else if(!sel.has(id))sel=new Set(grp);
+    mode='drag';st={p0:p,snap:snapSel()};
+  }else{sel=new Set();mode=null}
+  render();
+});
+svg.addEventListener('pointermove',e=>{
+  if(!ptrs.has(e.pointerId)||!mode)return;
+  const p=pt(e);ptrs.set(e.pointerId,p);
+  if(mode==='drag'){
+    if(!moved){if(Math.hypot(p.x-st.p0.x,p.y-st.p0.y)<3)return;push();moved=true}
+    const dx=p.x-st.p0.x,dy=p.y-st.p0.y;
+    st.snap.forEach(o=>{o.it.x=clamp(o.x+dx,0,400);o.it.y=clamp(o.y+dy,0,520)});
+  }else if(mode==='handle'){
+    if(!moved){push();moved=true}
+    const c=st.c,ang=Math.atan2(p.y-c.y,p.x-c.x);
+    xform(Math.hypot(p.x-c.x,p.y-c.y)/st.d0,ang-st.a0);uiAng=ang*180/Math.PI;
+  }else if(mode==='stretch'){
+    if(!moved){push();moved=true}
+    const it=st.it,d=(p.x-it.x)*st.dir.x+(p.y-it.y)*st.dir.y,v=clamp((d-16)/(DEF[it.type].R*it.s),.15,6);
+    if(st.axis==='hx')it.sx=v;else it.sy=v;
+  }else if(mode==='pinch'&&ptrs.size===2){
+    const [a,b]=[...ptrs.values()];
+    xform(Math.hypot(b.x-a.x,b.y-a.y)/st.d0,Math.atan2(b.y-a.y,b.x-a.x)-st.a0);
+  }
+  render();
+});
+const up=e=>{
+  if(mode==='drag'&&!moved&&(multi||e.shiftKey)&&downId&&!addedNow){groupOf(downId).forEach(i=>sel.delete(i))}
+  ptrs.delete(e.pointerId);
+  if(!ptrs.size){mode=null;uiAng=null}else if(mode==='pinch')mode=null;
+  render();
+};
+svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+
+$('parts').addEventListener('click',e=>{
+  const b=e.target.closest('[data-add]');if(!b)return;
+  trayType=b.dataset.add;
+  document.querySelectorAll('[data-add]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  renderTray();
+});
+$('flip').onclick=()=>{const list=selItems();if(!list.length)return;push();const c=bounds(list).cx;list.forEach(i=>{i.x=2*c-i.x;i.f=!i.f;if(!isBall(i))i.r=-i.r});render()};
+const reorder=top=>{if(!sel.size)return;push();const a=items.filter(i=>sel.has(i.id)),b=items.filter(i=>!sel.has(i.id));items=top?[...b,...a]:[...a,...b];render()};
+$('front').onclick=()=>reorder(true);
+$('back').onclick=()=>reorder(false);
+$('dup').onclick=()=>{
+  const list=selItems().filter(i=>!isBall(i));if(!list.length)return;push();
+  const gm={};const copies=list.map(i=>{const c={...i,id:'p'+(nid++),x:clamp(i.x+16,0,400),y:clamp(i.y+16,0,520)};if(i.g){c.g=gm[i.g]||(gm[i.g]='g'+(gid++))}return c});
+  items.push(...copies);sel=new Set(copies.map(c=>c.id));render();
+};
+$('del').onclick=()=>{if(!selItems().some(i=>!isBall(i)))return;push();items=items.filter(i=>!(sel.has(i.id)&&!isBall(i)));sel=new Set();render()};
+$('group').onclick=()=>{if(sel.size<2)return;push();const g='g'+(gid++);selItems().forEach(i=>i.g=g);render()};
+$('ungroup').onclick=()=>{push();selItems().forEach(i=>delete i.g);render()};
+$('multi').onclick=()=>{multi=!multi;$('multi').setAttribute('aria-pressed',multi)};
+$('undo').onclick=()=>{if(!hist.length)return;items=JSON.parse(hist.pop());sel=new Set([...sel].filter(id=>get(id)));render()};
+$('reset').onclick=()=>{push();items=initial();sel=new Set();render()};
+document.addEventListener('keydown',e=>{if((e.key==='Delete'||e.key==='Backspace')&&sel.size&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();$('del').click()}});
+
+async function toPng(){
+  const keepU=uiG.innerHTML,keepT=trayG.innerHTML;uiG.innerHTML='';trayG.innerHTML='';
+  const src=new XMLSerializer().serializeToString(svg).replace(/class="flake"[^>]*?style="[^"]*"/g,'').replace('<svg','<svg width="1200" height="1560"');
+  uiG.innerHTML=keepU;trayG.innerHTML=keepT;
+  const url=URL.createObjectURL(new Blob([src],{type:'image/svg+xml'}));
+  const img=new Image();await new Promise((ok,ng)=>{img.onload=ok;img.onerror=ng;img.src=url});
+  const c=document.createElement('canvas');c.width=1200;c.height=1560;
+  c.getContext('2d').drawImage(img,0,0,1200,1560);URL.revokeObjectURL(url);
+  return new Promise(ok=>c.toBlob(ok,'image/png'));
+}
+$('share').onclick=async()=>{
+  sel=new Set();render();
+  let blob;try{blob=await toPng()}catch(err){return}
+  const file=new File([blob],'yukidaruma.png',{type:'image/png'});
+  try{
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],text:HASHTAG});return}
+  }catch(err){if(err&&err.name==='AbortError')return}
+  $('out').src=URL.createObjectURL(blob);$('modal').classList.add('on');
+};
+$('tag').textContent=HASHTAG;
+$('copytag').onclick=async()=>{try{await navigator.clipboard.writeText(HASHTAG);$('copytag').textContent='コピーしました'}catch(err){$('copytag').textContent='コピーできませんでした'}setTimeout(()=>$('copytag').textContent='ハッシュタグをコピー',1500)};
+$('close').onclick=()=>$('modal').classList.remove('on');
+renderTray();
+render();
+}
+</script>
+</body>
