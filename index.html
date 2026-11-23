@@ -81,10 +81,10 @@ h2{font-size:18px;margin:0 0 10px}
           <path d="M0 420 Q100 395 200 412 T400 405 V520 H0Z" fill="url(#ground)"/>
           <g id="flakes" fill="#fff" opacity=".8"></g>
         </g>
+        <g id="tray"></g>
         <g id="items"></g>
         </g>
         <g id="ui"></g>
-        <g id="tray" style="cursor:grab"></g>
       </svg>
   </div></div>
   <div class="ctl">
@@ -149,7 +149,7 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 function renderTray(){
   let inner;
-  if(trayType){const d=DEF[trayType],k=Math.min(30/d.R,2.6);inner=`<g transform="translate(52 52) scale(${k})">${d.svg}</g>`}
+  if(trayType)inner='';
   else inner=`<text x="52" y="48" text-anchor="middle" font-size="11" fill="#4a6178">部品を選ぶと</text><text x="52" y="64" text-anchor="middle" font-size="11" fill="#4a6178">ここに出ます</text>`;
   trayG.innerHTML=`<rect x="8" y="8" width="88" height="88" rx="14" fill="#fff" fill-opacity=".88" stroke="#2f5f97" stroke-width="2" stroke-dasharray="5 4"/>${inner}`;
 }
@@ -195,12 +195,6 @@ svg.addEventListener('pointerdown',e=>{
   }
   if(ptrs.size>1)return;
   moved=false;addedNow=false;downId=null;
-  if(e.target.closest('#tray')){
-    if(!trayType){mode=null;return}
-    push();moved=true;
-    const it={id:'p'+(nid++),type:trayType,x:p.x,y:p.y,s:DEF[trayType].spawn||1,r:0,f:false,sx:1,sy:1};
-    items.push(it);sel=new Set([it.id]);mode='drag';st={p0:p,snap:snapSel()};render();return;
-  }
   if(e.target.id==='hx'||e.target.id==='hy'){const it=selItems()[0];if(!it)return;const ax=axes(it);mode='stretch';st={it,axis:e.target.id,dir:e.target.id==='hx'?ax.u:ax.v};return}
   if(e.target.id==='handle'){
     const bb=bounds(selItems()),c={x:bb.cx,y:bb.cy};
@@ -247,6 +241,7 @@ svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
 $('parts').addEventListener('click',e=>{
   const b=e.target.closest('[data-add]');if(!b)return;
   trayType=b.dataset.add;
+  push();const it={id:'p'+(nid++),type:trayType,x:52,y:52,s:DEF[trayType].spawn||1,r:0,f:false,sx:1,sy:1};items.push(it);sel=new Set([it.id]);render();
   document.querySelectorAll('[data-add]').forEach(x=>x.setAttribute('aria-pressed',x===b));
   renderTray();
 });
@@ -254,11 +249,15 @@ $('flip').onclick=()=>{const list=selItems();if(!list.length)return;push();const
 const reorder=top=>{if(!sel.size)return;push();const a=items.filter(i=>sel.has(i.id)),b=items.filter(i=>!sel.has(i.id));items=top?[...b,...a]:[...a,...b];render()};
 $('front').onclick=()=>reorder(true);
 $('back').onclick=()=>reorder(false);
+let dupChain=null;
 $('dup').onclick=()=>{
-  const list=selItems().filter(i=>!isBall(i));if(!list.length)return;push();
-  const bb=bounds(list),step=bb.rad*2+6,dx=(bb.cx+step<=400||bb.cx+step-400<step-bb.cx)?step:-step;
-  const gm={};const copies=list.map(i=>{const c={...i,id:'p'+(nid++),x:i.x+dx,y:i.y};if(i.g){c.g=gm[i.g]||(gm[i.g]='g'+(gid++))}return c});
-  items.push(...copies);sel=new Set(copies.map(c=>c.id));render();
+  const key=[...sel].sort().join(',');let unit,n,dx;
+  if(dupChain&&dupChain.key===key&&dupChain.unit.every(id=>get(id))){unit=dupChain.unit.map(get);n=dupChain.n+1;dx=dupChain.dx}
+  else{unit=selItems();if(!unit.length)return;n=1;const bb=bounds(unit),step=bb.rad*2+6;dx=(bb.cx+step<=400||bb.cx+step-400<step-bb.cx)?step:-step}
+  push();
+  const gm={};const copies=unit.map(i=>{const c={...i,id:'p'+(nid++),x:i.x+dx*n,y:i.y};if(i.g){c.g=gm[i.g]||(gm[i.g]='g'+(gid++))}return c});
+  items.push(...copies);copies.forEach(c=>sel.add(c.id));
+  dupChain={unit:unit.map(i=>i.id),n,dx,key:[...sel].sort().join(',')};render();
 };
 $('del').onclick=()=>{if(!selItems().some(i=>!isBall(i)))return;push();items=items.filter(i=>!(sel.has(i.id)&&!isBall(i)));sel=new Set();render()};
 $('group').onclick=()=>{if(sel.size<2)return;push();const g='g'+(gid++);selItems().forEach(i=>i.g=g);render()};
