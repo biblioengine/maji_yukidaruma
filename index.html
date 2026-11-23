@@ -21,9 +21,12 @@ html,body{height:100%;overflow:hidden}
 main{max-width:640px;height:100dvh;margin:0 auto;padding:10px max(3vw,10px) 10px;display:flex;flex-direction:column;gap:8px}
 h1{font-family:"Yuji Boku",serif;font-size:clamp(20px,5.6vw,30px);line-height:1.15;margin:2px 0 0;font-weight:400;letter-spacing:-.02em;white-space:nowrap;-webkit-text-stroke:1px currentColor;filter:url(#rough);transform:rotate(-1.5deg);transform-origin:left center}
 .stage{flex:1;min-height:0;display:grid;place-items:center}
+.frame{position:relative;width:300px;height:390px}
+#share{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);min-height:48px;padding:0 22px;font-size:16px;border-radius:999px;box-shadow:0 6px 16px rgba(120,20,30,.35);white-space:nowrap}
 #svg{display:block;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none}
-.bar{display:flex;gap:6px;align-items:center;overflow-x:auto;padding-bottom:4px;overscroll-behavior-x:contain}
-.bar button{flex:none;padding:0 11px}
+.bar{display:flex;gap:6px;align-items:center;overflow-x:auto;padding:4px 2px;overscroll-behavior-x:contain;scrollbar-width:none}
+.bar::-webkit-scrollbar{display:none}
+.bar button{flex:none;padding:0 11px;font-size:14px}
 .bar .icon{width:44px;padding:0;display:grid;place-items:center}
 .bar .icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .bar .sp{flex:1;min-width:8px}
@@ -35,15 +38,14 @@ button[aria-pressed=true]{background:#2f5f97;border-color:#2f5f97;color:#fff}
 .parts button[aria-pressed=true]{background:light-dark(#dceaf8,#24405f);color:var(--ink);border-color:#2f5f97}
 button.main{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:800}
 h2{font-size:18px;margin:0 0 10px}
-.ctl{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;align-items:center}
-.ctl.off{opacity:.4;pointer-events:none}
-.pad{height:104px;border-radius:16px;background:var(--card);border:1.5px solid var(--line);touch-action:none;display:grid;place-items:center;align-content:center;gap:2px;font-size:12px;color:var(--sub);cursor:move;user-select:none;-webkit-user-select:none}
-.pad svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
-.pad.on{border-color:#2f5f97;background:light-dark(#dceaf8,#24405f)}
-.sliders{display:grid;gap:0}
-.row{display:grid;grid-template-columns:3em minmax(0,1fr) 3.4em;align-items:center;gap:6px;font-size:13px}
-.row b{font-weight:500;text-align:right;font-variant-numeric:tabular-nums;color:var(--sub)}
-.row input{width:100%;height:26px;margin:0;accent-color:#2f5f97}
+.ctl{display:grid;grid-template-columns:100px minmax(0,1fr);gap:10px;align-items:center}
+.pad{width:100px;height:100px;touch-action:none;cursor:move;user-select:none;-webkit-user-select:none}
+.pad svg{width:100%;height:100%;display:block;filter:drop-shadow(0 3px 5px rgba(20,40,70,.25))}
+.pad .dp{fill:light-dark(#2f3640,#4a5361)}.pad .dr{fill:none;stroke:light-dark(#46505d,#606b7b);stroke-width:2}
+.pad .da{fill:light-dark(#aab4c2,#c4ccd8)}
+.pad .dk{fill:light-dark(#4a5563,#6b7686)}.pad .dk2{fill:light-dark(#3a4450,#596474)}
+.pad.on .dp{fill:#2f5f97}.pad.on .dk{fill:#5b8ccc}.pad.on .dk2{fill:#4a7bbb}
+.pad.off{opacity:.35;pointer-events:none}
 .parts{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 8px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
 .parts button{flex:none;width:84px;height:auto;padding:8px 4px 6px;display:grid;justify-items:center;gap:2px;font-size:12px;white-space:nowrap;scroll-snap-align:start}
 .parts svg{width:52px;height:52px}
@@ -61,7 +63,7 @@ h2{font-size:18px;margin:0 0 10px}
 <main>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="rough" x="-5%" y="-20%" width="110%" height="140%"><feTurbulence type="fractalNoise" baseFrequency="0.9 0.25" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3" result="d"/><feTurbulence type="fractalNoise" baseFrequency="0.9 0.06" numOctaves="3" seed="7" result="n2"/><feColorMatrix in="n2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.4 1.75" result="m"/><feComposite in="d" in2="m" operator="in"/></filter></svg>
 <h1>本気の雪だるまを見せてくれないか</h1>
-  <div class="stage">
+  <div class="stage" id="stage"><div class="frame" id="frame">
       <svg id="svg" viewBox="0 0 400 520" aria-label="雪だるまのステージ">
         <defs>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f5f97"/><stop offset=".7" stop-color="#8fb5d9"/><stop offset="1" stop-color="#d9e7f3"/></linearGradient>
@@ -79,16 +81,10 @@ h2{font-size:18px;margin:0 0 10px}
         <g id="ui"></g>
         <g id="tray" style="cursor:grab"></g>
       </svg>
-  </div>
-  <div class="ctl off" id="ctl">
-    <div class="pad" id="pad" aria-label="移動パッド"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg><span>移動</span></div>
-    <div class="sliders">
-      <label class="row"><span>角度</span><input type="range" id="cr" min="-180" max="180" step="1"><b id="vr"></b></label>
-      <label class="row"><span>大きさ</span><input type="range" id="cs" min="0" max="1000" step="1"><b id="vs"></b></label>
-      <label class="row"><span>横幅</span><input type="range" id="cx" min="0" max="1000" step="1"><b id="vx"></b></label>
-      <label class="row"><span>高さ</span><input type="range" id="cy" min="0" max="1000" step="1"><b id="vy"></b></label>
-    </div>
-  </div>
+      <button id="share" class="main">画像にしてシェア</button>
+  </div></div>
+  <div class="ctl">
+    <div class="pad off" id="pad" aria-label="移動パッド"><svg viewBox="0 0 120 120"><circle class="dp" cx="60" cy="60" r="57"/><circle class="dr" cx="60" cy="60" r="44"/><path class="da" d="M60 9l-7 9h14zM60 111l-7-9h14zM9 60l9-7v14zM111 60l-9-7v14z"/><g id="knob"><circle class="dk" cx="60" cy="60" r="22"/><circle class="dk2" cx="60" cy="60" r="15"/></g></svg></div>
   <div class="bar">
     <button id="undo" class="icon" aria-label="元に戻す" title="元に戻す"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/></svg></button>
     <button id="flip" class="icon" aria-label="左右反転" title="左右反転" disabled><svg viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg></button>
@@ -99,9 +95,8 @@ h2{font-size:18px;margin:0 0 10px}
     <button id="multi" aria-pressed="false">複数選択</button>
     <button id="group" disabled>グループ化</button>
     <button id="ungroup" disabled>グループ解除</button>
-    <span class="sp"></span>
     <button id="reset">最初から</button>
-    <button id="share" class="main">画像にしてシェア</button>
+  </div>
   </div>
   <div class="parts" id="parts" aria-label="部品"></div>
 </main>
@@ -159,7 +154,9 @@ function render(){
   if(list.length){
     const b=bounds(list),rc=b.rad*1.1+8;
     const each=list.length>1?list.map(i=>`<circle cx="${i.x}" cy="${i.y}" r="${ext(i)*1.05+4}" fill="none" stroke="#2f5f97" stroke-width="1.5" stroke-dasharray="3 4" opacity=".8" pointer-events="none"/>`).join(''):'';
-    uiG.innerHTML=each+`<circle cx="${b.cx}" cy="${b.cy}" r="${rc}" fill="none" stroke="#2f5f97" stroke-width="2" stroke-dasharray="6 5" pointer-events="none"/>`;
+    const deg=uiAng!=null?uiAng:(list.length===1?list[0].r:0)-45;
+    const a=deg*Math.PI/180,hx=b.cx+Math.cos(a)*rc,hy=b.cy+Math.sin(a)*rc;
+    uiG.innerHTML=each+`<circle cx="${b.cx}" cy="${b.cy}" r="${rc}" fill="none" stroke="#2f5f97" stroke-width="2" stroke-dasharray="6 5" pointer-events="none"/><line x1="${b.cx}" y1="${b.cy}" x2="${hx}" y2="${hy}" stroke="#2f5f97" stroke-width="1.5" opacity=".7" pointer-events="none"/><circle id="handle" cx="${hx}" cy="${hy}" r="18" fill="transparent" style="cursor:nwse-resize"/><circle cx="${hx}" cy="${hy}" r="10" fill="#d8323c" stroke="#fff" stroke-width="3" pointer-events="none"/>`+(list.length===1?stretchUI(list[0]):'');
   }else uiG.innerHTML='';
   const has=list.length>0,nonBall=list.some(i=>!isBall(i));
   const allSame=has&&list.every(i=>i.g&&i.g===list[0].g);
@@ -288,43 +285,24 @@ $('share').onclick=async()=>{
 $('tag').textContent=HASHTAG;
 $('copytag').onclick=async()=>{try{await navigator.clipboard.writeText(HASHTAG);$('copytag').textContent='コピーしました'}catch(err){$('copytag').textContent='コピーできませんでした'}setTimeout(()=>$('copytag').textContent='ハッシュタグをコピー',1500)};
 $('close').onclick=()=>$('modal').classList.remove('on');
-const LOGM=(mn,mx)=>({to:v=>Math.log(clamp(v,mn,mx)/mn)/Math.log(mx/mn)*1000,from:x=>mn*Math.pow(mx/mn,x/1000)});
-const SC=LOGM(.15,4),STR=LOGM(.15,6);
-let cst=null,ctlNeutral=true;
-const norm=a=>((a%360)+540)%360-180;
-function ctlStart(){
-  if(cst)return true;const list=selItems();if(!list.length)return false;push();
-  const b=bounds(list);cst={c:{x:b.cx,y:b.cy},single:list.length===1,snap:list.map(i=>({it:i,x:i.x,y:i.y,s:i.s,r:i.r,sx:i.sx||1,sy:i.sy||1}))};return true;
-}
-function syncCtl(list){
-  $('ctl').classList.toggle('off',!list.length);
-  if(cst)return;
-  if(list.length===1){const i=list[0];
-    $('cr').value=Math.round(norm(i.r));$('cs').value=SC.to(i.s);$('cx').value=STR.to(i.sx||1);$('cy').value=STR.to(i.sy||1);
-    $('vr').textContent=Math.round(norm(i.r))+'°';$('vs').textContent=Math.round(i.s*100)+'%';$('vx').textContent=Math.round((i.sx||1)*100)+'%';$('vy').textContent=Math.round((i.sy||1)*100)+'%';
-  }else{
-    $('cr').value=0;$('cs').value=SC.to(1);$('cx').value=STR.to(1);$('cy').value=STR.to(1);
-    ['vr','vs','vx','vy'].forEach(id=>$(id).textContent='');
-  }
-}
-$('cr').addEventListener('input',e=>{if(!ctlStart())return;const v=+e.target.value;
-  if(cst.single)cst.snap[0].it.r=v;else xform(1,v*Math.PI/180,cst);
-  $('vr').textContent=v+'°';render()});
-$('cs').addEventListener('input',e=>{if(!ctlStart())return;const v=SC.from(+e.target.value);
-  if(cst.single)cst.snap[0].it.s=v;else xform(v,0,cst);
-  $('vs').textContent=Math.round(v*100)+'%';render()});
-['cx','cy'].forEach(id=>$(id).addEventListener('input',e=>{if(!ctlStart())return;const v=STR.from(+e.target.value),k=id==='cx'?'sx':'sy';
-  cst.snap.forEach(o=>{o.it[k]=cst.single?v:clamp(o[k]*v,.15,6)});
-  $(id==='cx'?'vx':'vy').textContent=Math.round(v*100)+'%';render()}));
-['cr','cs','cx','cy'].forEach(id=>$(id).addEventListener('change',()=>{cst=null;render()}));
+const fit=()=>{const st=$('stage'),W=st.clientWidth,H=st.clientHeight;const w=Math.min(W,H*400/520);$('frame').style.width=w+'px';$('frame').style.height=(w*520/400)+'px'};
+const stageRO=new ResizeObserver(fit);stageRO.observe($('stage'));fit();
+function syncCtl(list){$('pad').classList.toggle('off',!list.length)}
 let padSt=null;
 $('pad').addEventListener('pointerdown',e=>{if(!sel.size)return;try{$('pad').setPointerCapture(e.pointerId)}catch(err){}
   padSt={x:e.clientX,y:e.clientY,moved:false,snap:snapSel()};$('pad').classList.add('on')});
 $('pad').addEventListener('pointermove',e=>{if(!padSt)return;
   const m=svg.getScreenCTM(),k=.6/m.a,dx=(e.clientX-padSt.x)*k,dy=(e.clientY-padSt.y)*k;
   if(!padSt.moved){if(Math.hypot(dx,dy)<1)return;push();padSt.moved=true}
-  padSt.snap.forEach(o=>{o.it.x=clamp(o.x+dx,0,400);o.it.y=clamp(o.y+dy,0,520)});render()});
-const padEnd=()=>{padSt=null;$('pad').classList.remove('on')};
+  padSt.snap.forEach(o=>{o.it.x=clamp(o.x+dx,0,400);o.it.y=clamp(o.y+dy,0,520)});
+  const rr=$('pad').getBoundingClientRect(),sc=120/rr.width;let kx=(e.clientX-padSt.x)*sc,ky=(e.clientY-padSt.y)*sc;const kl=Math.hypot(kx,ky);if(kl>24){kx*=24/kl;ky*=24/kl}
+  $('knob').setAttribute('transform',`translate(${kx} ${ky})`);render()});
+const padEnd=e=>{
+  if(padSt&&!padSt.moved&&e&&e.type==='pointerup'){
+    const r=$('pad').getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;
+    if(Math.hypot(x,y)>r.width*.12){const ax=Math.abs(x)>Math.abs(y),dx=ax?Math.sign(x)*2:0,dy=ax?0:Math.sign(y)*2;push();padSt.snap.forEach(o=>{o.it.x=clamp(o.x+dx,0,400);o.it.y=clamp(o.y+dy,0,520)});render()}
+  }
+  padSt=null;$('pad').classList.remove('on');$('knob').removeAttribute('transform')};
 $('pad').addEventListener('pointerup',padEnd);$('pad').addEventListener('pointercancel',padEnd);
 renderTray();
 render();
