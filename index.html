@@ -59,14 +59,17 @@ h2{font-size:18px;margin:0 0 10px}
           <radialGradient id="snow" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#ffffff"/><stop offset=".65" stop-color="#f1f6fb"/><stop offset="1" stop-color="#c9d9ea"/></radialGradient>
           <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dfe9f4"/></linearGradient>
         </defs>
+        <g id="scene">
         <g id="bg">
           <rect width="400" height="520" fill="url(#sky)"/>
           <path d="M0 420 Q100 395 200 412 T400 405 V520 H0Z" fill="url(#ground)"/>
           <g id="flakes" fill="#fff" opacity=".8"></g>
         </g>
         <g id="items"></g>
+        </g>
         <g id="ui"></g>
         <g id="tray" style="cursor:grab"></g>
+        <g id="loupe" pointer-events="none" display="none"><clipPath id="lclip"><circle id="lcc" r="62"/></clipPath><g clip-path="url(#lclip)"><rect width="400" height="520" fill="#8fb5d9"/><use id="luse" href="#scene"/></g><circle id="lring" r="62" fill="none" stroke="#fff" stroke-width="4"/><circle id="lring2" r="64" fill="none" stroke="#2f5f97" stroke-width="1.5"/><path id="lcross" d="M-6 0H6M0-6V6" stroke="#d8323c" stroke-width="1.5"/></g>
       </svg>
   </div>
   <div class="bar">
@@ -166,7 +169,7 @@ function xform(k,da){
 }
 
 svg.addEventListener('pointerdown',e=>{
-  svg.setPointerCapture(e.pointerId);
+  try{svg.setPointerCapture(e.pointerId)}catch(err){}
   const p=pt(e);ptrs.set(e.pointerId,p);
   if(ptrs.size===2&&sel.size){
     const [a,b]=[...ptrs.values()],bb=bounds(selItems());
@@ -215,8 +218,20 @@ svg.addEventListener('pointermove',e=>{
     xform(Math.hypot(b.x-a.x,b.y-a.y)/st.d0,Math.atan2(b.y-a.y,b.x-a.x)-st.a0);
   }
   render();
+  if(e.pointerType==='touch'&&ptrs.size===1&&mode!=='pinch')showLoupe(p);else hideLoupe();
 });
+const LZ=2.2;
+function showLoupe(p){
+  const L=$('loupe'),lx=(p.x>220&&p.y<190)?72:328,ly=72;
+  $('lcc').setAttribute('cx',lx);$('lcc').setAttribute('cy',ly);
+  ['lring','lring2'].forEach(id=>{$(id).setAttribute('cx',lx);$(id).setAttribute('cy',ly)});
+  $('lcross').setAttribute('transform',`translate(${lx} ${ly})`);
+  $('luse').setAttribute('transform',`translate(${lx-LZ*p.x} ${ly-LZ*p.y}) scale(${LZ})`);
+  L.setAttribute('display','inline');
+}
+function hideLoupe(){$('loupe').setAttribute('display','none')}
 const up=e=>{
+  hideLoupe();
   if(mode==='drag'&&!moved&&(multi||e.shiftKey)&&downId&&!addedNow){groupOf(downId).forEach(i=>sel.delete(i))}
   ptrs.delete(e.pointerId);
   if(!ptrs.size){mode=null;uiAng=null}else if(mode==='pinch')mode=null;
